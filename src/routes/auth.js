@@ -7,7 +7,7 @@ const wrap = require('../middlewares/wrap');
 
 // Máximo 20 intentos por IP cada 15 minutos (frena adivinar contraseñas)
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, max: 20,
+  windowMs: 15 * 60 * 1000, max: process.env.NODE_ENV === 'test' ? 1000 : 20,
   message: { success: false, message: 'Demasiados intentos. Espera 15 minutos.' }
 });
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

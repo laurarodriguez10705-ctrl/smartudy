@@ -22,7 +22,7 @@ router.get('/tareas', wrap(async (req, res) => {
 }));
 router.post('/tareas', wrap(async (req, res) => {
   const titulo = texto(req.body.titulo).slice(0, 200);
-  if (!titulo) return res.status(400).json({ success: false, message: 'El título es obligatorio.' });
+if (!titulo) return res.status(400).json({ success: false, message: 'El título es obligatorio.' });
   const [r] = await db.query('INSERT INTO tareas (titulo, descripcion, completada, usuario_id) VALUES (?, ?, 0, ?)',
     [titulo, texto(req.body.descripcion), req.usuario.id]);
   res.status(201).json({ success: true, message: '¡Tarea creada con éxito!', tareaId: r.insertId });
