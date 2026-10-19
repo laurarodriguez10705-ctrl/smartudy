@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smartudy · Panel</title>
+<style>
+:root{--bg:#0f0a1f;--card:#1a1233;--line:#2e2352;--txt:#ede9fe;--mut:#a79bd1;--pri:#c084fc;--err:#f87171}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--txt)}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+h1{font-size:1.2rem;margin:0;color:var(--pri)}
+nav{display:flex;gap:8px;padding:12px 20px;flex-wrap:wrap}
+button,input,select{font:inherit;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--txt);padding:8px 12px}
+button{cursor:pointer}
+button.on,button.pri{background:var(--pri);color:#1a1233;border-color:var(--pri)}
+main{max-width:760px;margin:0 auto;padding:0 20px 40px}
+form{display:grid;gap:8px;margin-bottom:16px}
+.fila{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.item small{color:var(--mut);display:block}
+.item div:last-child{display:flex;gap:6px}
+.hecha b{text-decoration:line-through;opacity:.6}
+#msg{color:var(--err);min-height:1.2em;margin:0 0 8px}
+.vacio{color:var(--mut)}
+[hidden]{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 Smartudy</h1>
+  <div><span id="saludo"></span> <button id="salir">Salir</button></div>
+</header>
+<nav id="tabs">
+  <button data-t="tareas" class="on">✅ Tareas</button>
+  <button data-t="horarios">🗓️ Horarios</button>
+  <button data-t="recordatorios">⏰ Recordatorios</button>
+</nav>
+<main>
+  <p id="msg"></p>
+
+  <section id="tareas">
+    <form id="f-tareas">
+      <input name="titulo" placeholder="Título de la tarea" maxlength="200" required>
+      <input name="descripcion" placeholder="Descripción (opcional)">
+      <button class="pri">Agregar tarea</button>
+    </form>
+    <div id="l-tareas"></div>
+  </section>
+
+  <section id="horarios" hidden>
+    <form id="f-horarios">
+      <input name="titulo" placeholder="Materia o actividad" maxlength="200" required>
+      <div class="fila">
+        <select name="dia_semana"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option></select>
+        <select name="tipo"><option>Clase</option><option>Estudio</option><option>Examen</option><option>Otro</option></select>
+      </div>
+      <div class="fila">
+        <input type="time" name="hora_inicio" required>
+        <input type="time" name="hora_fin" required>
+      </div>
+      <button class="pri">Agregar horario</button>
+    </form>
+    <div id="l-horarios"></div>
+  </section>
+
+  <section id="recordatorios" hidden>
+    <form id="f-recordatorios">
+      <input name="asignatura" placeholder="Asignatura" maxlength="100" required>
+      <input name="titulo" placeholder="¿Qué debes recordar?" maxlength="200" required>
+      <div class="fila">
+        <input type="date" name="fecha" required>
+        <input type="time" name="hora" required>
+      </div>
+      <button class="pri">Agregar recordatorio</button>
+    </form>
+    <div id="l-recordatorios"></div>
+  </section>
+</main>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) location.href = 'index.html';
+const $ = (id) => document.getElementById(id);
+$('saludo').textContent = 'Hola, ' + (localStorage.getItem('usuarioNombre') || '');
+
+function salir() { localStorage.clear(); location.href = 'index.html'; }
+$('salir').onclick = salir;
+
+// Todas las peticiones llevan el token; si expiró, se cierra la sesión.
+async function api(url, metodo = 'GET', cuerpo) {
+  const r = await fetch('/api/' + url, {
+    method: metodo,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: cuerpo ? JSON.stringify(cuerpo) : undefined
+  });
+  if (r.status === 401 || r.status === 403) { salir(); return {}; }
+  const d = await r.json();
+  $('msg').textContent = d.success ? '' : (d.message || 'Ocurrió un error.');
+  return d;
+}
+
+// Se usa textContent (nunca innerHTML) para que nadie pueda inyectar código en un título.
+function fila(titulo, detalle, botones, clase = '') {
+  const d = document.createElement('div'); d.className = 'item ' + clase;
+  const t = document.createElement('div');
+  const b = document.createElement('b'); b.textContent = titulo;
+  const s = document.createElement('small'); s.textContent = detalle;
+  t.append(b, s);
+  const acc = document.createElement('div'); acc.append(...botones);
+  d.append(t, acc); return d;
+}
+function boton(txt, fn) { const b = document.createElement('button'); b.textContent = txt; b.onclick = fn; return b; }
+function pintar(id, filas, vacio) {
+  const c = $(id); c.replaceChildren();
+  if (!filas.length) { const p = document.createElement('p'); p.className = 'vacio'; p.textContent = vacio; c.append(p); }
+  else c.append(...filas);
+}
+
+const cargar = {
+  async tareas() {
+    const d = await api('tareas');
+    pintar('l-tareas', (d.tareas || []).map((t) => fila(t.titulo, t.descripcion || '', [
+      boton(t.completada ? '↩️' : '✔️', async () => { await api('tareas/' + t.id, 'PUT', { completada: !t.completada }); cargar.tareas(); }),
+      boton('🗑️', async () => { await api('tareas/' + t.id, 'DELETE'); cargar.tareas(); })
+    ], t.completada ? 'hecha' : '')), 'Aún no tienes tareas.');
+  },
+  async horarios() {
+    const d = await api('horarios');
+    pintar('l-horarios', (d.horarios || []).map((h) => fila(h.titulo,
+      `${h.dia_semana} · ${h.hora_inicio.slice(0, 5)} - ${h.hora_fin.slice(0, 5)} · ${h.tipo}`,
+      [boton('🗑️', async () => { await api('horarios/' + h.id, 'DELETE'); cargar.horarios(); })])), 'Aún no tienes horarios.');
+  },
+  async recordatorios() {
+    const d = await api('recordatorios');
+    pintar('l-recordatorios', (d.recordatorios || []).map((r) => fila(r.titulo,
+      `${r.asignatura} · ${new Date(r.fecha_recordatorio).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}`,
+      [boton('🗑️', async () => { await api('recordatorios/' + r.id, 'DELETE'); cargar.recordatorios(); })])), 'Aún no tienes recordatorios.');
+  }
+};
+
+// Un solo manejador para los tres formularios
+for (const nombre of Object.keys(cargar)) {
+  $('f-' + nombre).onsubmit = async (e) => {
+    e.preventDefault();
+    const d = await api(nombre, 'POST', Object.fromEntries(new FormData(e.target)));
+    if (d.success) { e.target.reset(); cargar[nombre](); }
+  };
+}
+
+// Pestañas
+$('tabs').onclick = (e) => {
+  const t = e.target.dataset.t; if (!t) return;
+  for (const b of $('tabs').children) b.classList.toggle('on', b.dataset.t === t);
+  for (const n of Object.keys(cargar)) $(n).hidden = n !== t;
+  cargar[t]();
+};
+cargar.tareas();
+</script>
+</body>
+</html>

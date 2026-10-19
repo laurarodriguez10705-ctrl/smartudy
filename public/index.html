@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartudy - ¡Aprender es Divertido!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #6d28d9 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Elementos flotantes */
+        .floating-element {
+            position: absolute;
+            font-size: 40px;
+            animation: float 4s ease-in-out infinite;
+            opacity: 0.8;
+            z-index: 1;
+        }
+        .fe-1 { top: 10%; left: 15%; animation-delay: 0s; }
+        .fe-2 { top: 75%; left: 10%; animation-delay: 1.5s; font-size: 50px; }
+        .fe-3 { top: 20%; right: 12%; animation-delay: 1s; }
+        .fe-4 { top: 70%; right: 18%; animation-delay: 2s; font-size: 45px; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(8deg); }
+        }
+
+        /* Contenedor Principal */
+        .main-wrapper {
+            display: flex;
+            background: rgba(30, 27, 75, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            z-index: 10;
+            max-width: 950px;
+            width: 100%;
+        }
+
+        /* Panel Izquierdo */
+        .kids-panel {
+            background: linear-gradient(180deg, #581c87 0%, #7c3aed 100%);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 420px;
+            text-align: center;
+        }
+        .kids-panel h2 {
+            font-size: 30px;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+        .kids-panel p {
+            font-size: 16px;
+            color: #ddd6fe;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        .animated-books-container {
+            font-size: 65px;
+            display: flex;
+            gap: 20px;
+            animation: bounceBooks 2s ease-in-out infinite;
+        }
+        @keyframes bounceBooks {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* Tarjetas Derecha */
+        .form-card {
+            padding: 40px 45px;
+            width: 530px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .brand-header h1 {
+            font-size: 32px;
+            color: #c084fc;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .brand-header p {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 2px solid #581c87;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
+        }
+        button.action-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 10px;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            transition: all 0.2s ease;
+        }
+        button.action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        .switch-text {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .switch-text span {
+            color: #c084fc;
+            cursor: pointer;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+        .switch-text span:hover {
+            color: #e879f9;
+        }
+        .mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            min-height: 20px;
+        }
+
+        /* Estilos del Temporizador Inteligente con Bloqueo de Juegos */
+        .pomodoro-box {
+            background: rgba(21, 13, 46, 0.8);
+            border: 1px solid #482e85;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .config-tiempo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #ddd6fe;
+        }
+
+        .config-tiempo input {
+            width: 70px;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .pantalla-reloj {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        .controles-reloj {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn-control {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn-iniciar { background-color: #10b981; color: white; }
+        .btn-iniciar:hover { background-color: #059669; }
+
+        .btn-reiniciar { background-color: #ef4444; color: white; }
+        .btn-reiniciar:hover { background-color: #dc2626; }
+
+        .btn-juegos {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-juegos.bloqueado {
+            background: #334155 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Elementos flotantes -->
+    <div class="floating-element fe-1">📚</div>
+    <div class="floating-element fe-2">✨</div>
+    <div class="floating-element fe-3">🚀</div>
+    <div class="floating-element fe-4">📖</div>
+
+    <div class="main-wrapper">
+        <!-- Panel Izquierdo -->
+        <div class="kids-panel">
+            <h2>¡Aventura Mágica del Saber!</h2>
+            <p>Explora, aprende y diviértete descubriendo un mundo lleno de conocimiento.</p>
+            <div class="animated-books-container">
+                <span>🎒</span>
+                <span>📚</span>
+                <span>⭐</span>
+            </div>
+        </div>
+
+        <!-- TARJETA DE INICIO DE SESIÓN -->
+        <div id="loginCard" class="form-card">
+            <div class="brand-header">
+                <h1>Smartudy</h1>
+                <p>Configura tu tiempo y concéntrate</p>
+            </div>
+            
+            <!-- TEMPORIZADOR Y BLOQUEO DE JUEGOS -->
+            <div class="pomodoro-box">
+                <div class="config-tiempo">
+                    <label for="inputMinutos" style="margin:0; font-size:12px;">Minutos de estudio:</label>
+                    <input type="number" id="inputMinutos" value="25" min="1" max="180" onchange="actualizarTiempoManual()">
+                </div>
+
+                <div id="relojDisplay" class="pantalla-reloj">25:00</div>
+
+                <div class="controles-reloj">
+                    <button class="btn-control btn-iniciar" id="btnIniciar" onclick="iniciarTemporizador()">▶ Iniciar</button>
+                    <button class="btn-control btn-reiniciar" onclick="reiniciarTemporizador()">🔄 Reiniciar</button>
+                </div>
+
+                <button id="btnZonaJuegos" class="btn-juegos bloqueado" onclick="abrirZonaJuegos()">
+                    🔒 Zona de Juegos Bloqueada (Estudia primero)
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label for="loginEmail">Correo electrónico</label>
+                <input type="email" id="loginEmail" placeholder="tu.correo@email.com">
+            </div>
+            <div class="input-group">
+                <label for="loginPassword">Contraseña</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="action-btn" onclick="realizarLogin()">¡Entrar a Estudiar!</button>
+            <div id="mensajeLogin" class="mensaje"></div>
+            
+            <div class="switch-text" style="margin-bottom: 6px;">
+                <span onclick="mostrarOlvidePassword()">¿Olvidaste tu contraseña?</span>
+            </div>
+            <div class="switch-text">
+                ¿No tienes una cuenta? <span onclick="mostrarRegistro()">Regístrate aquí</span>
+            </div>
+        </div>
+
+        <!-- TARJETA DE REGISTRO (CONECTADA) -->
+        <div id="registerCard" class="form-card" style="display: none;">
+            <div class="brand-header">
+                <h1>Crear Cuenta</h1>
+                <p>Únete a la aventura de Smartudy</p>
+            </div>
+            <div class="input-group">
+                <label for="regNombre">Nombre</label>
+                <input type="text" id="regNombre" placeholder="Tu nombre">
+            </div>
+            <div class="input-group">
+                <label for="regEmail">Correo electrónico</label>
+                <input type="email" id="regEmail" placeholder="tu.correo@email.com">
+            </div>
+            <div class="input-group">
+                <label for="regPassword">Contraseña</label>
+                <input type="password" id="regPassword" placeholder="••••••••">
+            </div>
+            <button class="action-btn" onclick="realizarRegistro()">Registrarse</button>
+            <div id="mensajeRegistro" class="mensaje"></div>
+            <div class="switch-text">
+                ¿Ya tienes una cuenta? <span onclick="mostrarLogin()">Inicia sesión</span>
+            </div>
+        </div>
+
+        <!-- TARJETA DE RECUPERAR CONTRASEÑA -->
+        <div id="recoveryCard" class="form-card" style="display: none;">
+            <div class="brand-header">
+                <h1>Recuperar Clave</h1>
+                <p>Te enviaremos un código de verificación</p>
+            </div>
+
+            <div id="pasoCorreo">
+                <div class="input-group">
+                    <label for="recEmail">Correo electrónico</label>
+                    <input type="email" id="recEmail" placeholder="tu.correo@email.com">
+                </div>
+                <button class="action-btn" onclick="enviarCodigoRecuperacion()">Enviar Código</button>
+            </div>
+
+            <div id="pasoNuevaPassword" style="display: none;">
+                <div class="input-group">
+                    <label for="recCodigo">Código de 6 dígitos</label>
+                    <input type="text" id="recCodigo" placeholder="Ej: 482910">
+                </div>
+                <div class="input-group">
+                    <label for="recNuevaPassword">Nueva Contraseña</label>
+                    <input type="password" id="recNuevaPassword" placeholder="Nueva contraseña">
+                </div>
+                <button class="action-btn" onclick="cambiarContrasena()">Restablecer Contraseña</button>
+            </div>
+
+            <div id="mensajeRecuperacion" class="mensaje"></div>
+            <div class="switch-text">
+                <span onclick="volverAlLogin()">Volver al inicio de sesión</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de lógica con navegación de tarjetas y temporizador -->
+    <script>
+        let temporizadorEnCurso = null;
+        let segundosTotales = 25 * 60;
+        let estaEstudiando = false;
+
+        // Funciones para alternar entre tarjetas (Login / Registro / Recuperación)
+        function mostrarRegistro() {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('registerCard').style.display = 'flex';
+            document.getElementById('recoveryCard').style.display = 'none';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('registerCard').style.display = 'none';
+            document.getElementById('loginCard').style.display = 'flex';
+            document.getElementById('recoveryCard').style.display = 'none';
+        }
+
+        function mostrarOlvidePassword() {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('registerCard').style.display = 'none';
+            document.getElementById('recoveryCard').style.display = 'flex';
+        }
+
+        function volverAlLogin() {
+            mostrarLogin();
+        }
+
+        // Lógica del Temporizador
+        function actualizarTiempoManual() {
+            if (estaEstudiando) return;
+            const input = document.getElementById('inputMinutos');
+            let mins = parseInt(input.value);
+            if (isNaN(mins) || mins < 1) mins = 1;
+            segundosTotales = mins * 60;
+            actualizarDisplayReloj();
+        }
+
+        function actualizarDisplayReloj() {
+            const m = Math.floor(segundosTotales / 60);
+            const s = segundosTotales % 60;
+            document.getElementById('relojDisplay').textContent = 
+                `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function iniciarTemporizador() {
+            if (estaEstudiando) return;
+
+            const input = document.getElementById('inputMinutos');
+            let mins = parseInt(input.value);
+            if (isNaN(mins) || mins < 1) mins = 1;
+            segundosTotales = mins * 60;
+
+            estaEstudiando = true;
+            input.disabled = true;
+            document.getElementById('btnIniciar').disabled = true;
+
+            const btnJuegos = document.getElementById('btnZonaJuegos');
+            btnJuegos.classList.add('bloqueado');
+            btnJuegos.textContent = "🔒 Zona de Juegos Bloqueada (Estudiando...)";
+
+            temporizadorEnCurso = setInterval(() => {
+                if (segundosTotales > 0) {
+                    segundosTotales--;
+                    actualizarDisplayReloj();
+                } else {
+                    clearInterval(temporizadorEnCurso);
+                    estaEstudiando = false;
+                    input.disabled = false;
+                    document.getElementById('btnIniciar').disabled = false;
+                    alert("¡Tiempo de estudio terminado! Hora de tu descanso y desbloqueo de juegos ☕");
+                    
+                    btnJuegos.classList.remove('bloqueado');
+                    btnJuegos.textContent = "🎮 ¡Abrir Zona de Juegos!";
+                }
+            }, 1000);
+        }
+
+        function reiniciarTemporizador() {
+            clearInterval(temporizadorEnCurso);
+            estaEstudiando = false;
+            document.getElementById('inputMinutos').disabled = false;
+            document.getElementById('btnIniciar').disabled = false;
+            actualizarTiempoManual();
+
+            const btnJuegos = document.getElementById('btnZonaJuegos');
+            btnJuegos.classList.add('bloqueado');
+            btnJuegos.textContent = "🔒 Zona de Juegos Bloqueada (Estudia primero)";
+        }
+
+        function abrirZonaJuegos() {
+            if (estaEstudiando) {
+                alert("¡No puedes jugar todavía! Debes terminar tu tiempo de estudio.");
+                return;
+            }
+            alert("¡Abriendo la Zona de Juegos para tu descanso!");
+        }
+
+        // ⭐ MODIFICADO: ahora verifica contra el backend real (código NOT_REGISTERED) y manda a registro si el usuario no existe
+        async function realizarLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const mensajeDiv = document.getElementById('mensajeLogin');
+
+            if (!email || !password) {
+                mensajeDiv.style.color = '#f87171';
+                mensajeDiv.textContent = '⚠️ Ingresa tu correo y contraseña.';
+                return;
+            }
+
+            mensajeDiv.style.color = '#c084fc';
+            mensajeDiv.textContent = 'Verificando...';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('usuarioEmail', email);
+                    if (data.token) localStorage.setItem('token', data.token);
+                    if (data.usuario) localStorage.setItem('usuarioNombre', data.usuario.nombre);
+                    if (data.usuario && data.usuario.id) localStorage.setItem('usuarioId', data.usuario.id);
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                if (data.code === 'NOT_REGISTERED') {
+                    mensajeDiv.style.color = '#fbbf24';
+                    mensajeDiv.textContent = '🔎 Tu usuario no está registrado. Te llevamos al registro...';
+                    setTimeout(() => {
+                        mostrarRegistro();
+                        document.getElementById('regEmail').value = email;
+                        mensajeDiv.textContent = '';
+                    }, 2000);
+                    return;
+                }
+
+                // Cualquier otro caso: contraseña incorrecta, campos vacíos, error de servidor, etc.
+                mensajeDiv.style.color = '#f87171';
+                mensajeDiv.textContent = '❌ ' + (data.message || 'Contraseña incorrecta o datos inválidos.');
+
+            } catch (e) {
+                mensajeDiv.style.color = '#f87171';
+                mensajeDiv.textContent = '⚠️ No se pudo conectar con el servidor.';
+                console.error(e);
+            }
+        }
+
+        // ⭐ MODIFICADO: ahora crea el usuario de verdad en la base de datos vía /api/registro
+        async function realizarRegistro() {
+            const nombre = document.getElementById('regNombre').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const mensajeDiv = document.getElementById('mensajeRegistro');
+
+            if (!nombre || !email || !password) {
+                mensajeDiv.style.color = '#f87171';
+                mensajeDiv.textContent = '⚠️ Por favor completa todos los datos de registro.';
+                return;
+            }
+
+            mensajeDiv.style.color = '#c084fc';
+            mensajeDiv.textContent = 'Creando tu cuenta...';
+
+            try {
+                const res = await fetch('/api/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    mensajeDiv.style.color = '#4ade80';
+                    mensajeDiv.textContent = '🎉 ¡Cuenta creada con éxito! Ahora inicia sesión.';
+                    setTimeout(() => {
+                        mostrarLogin();
+                        document.getElementById('loginEmail').value = email;
+                        mensajeDiv.textContent = '';
+                    }, 1800);
+                } else {
+                    mensajeDiv.style.color = '#f87171';
+                    mensajeDiv.textContent = '❌ ' + (data.message || 'No se pudo crear la cuenta.');
+                }
+            } catch (e) {
+                mensajeDiv.style.color = '#f87171';
+                mensajeDiv.textContent = '⚠️ No se pudo conectar con el servidor.';
+                console.error(e);
+            }
+        }
+
+        function enviarCodigoRecuperacion() {
+            const email = document.getElementById('recEmail').value;
+            if(!email) { alert("Ingresa tu correo."); return; }
+            document.getElementById('pasoCorreo').style.display = 'none';
+            document.getElementById('pasoNuevaPassword').style.display = 'block';
+            alert("Código enviado (simulado: usa cualquier código).");
+        }
+
+        function cambiarContrasena() {
+            alert("¡Contraseña restablecida con éxito!");
+            mostrarLogin();
+        }
+    </script>
+</body>
+</html>

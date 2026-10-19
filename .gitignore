@@ -1,0 +1,11 @@
+# Dependencias
+node_modules/
+
+# Secretos: NUNCA subir a GitHub
+.env
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
