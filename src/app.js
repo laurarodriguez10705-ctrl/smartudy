@@ -6,6 +6,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+app.set('trust proxy', 1); // Railway usa un proxy: así se detecta la IP real de cada usuario
+
 app.use(express.json({ limit: '100kb' }));
 app.use(express.static(path.join(__dirname, '..', 'public'))); // solo la carpeta public
 
